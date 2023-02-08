@@ -7,7 +7,6 @@ body {
     height: 90%;
     max-height: 90%;
     background-image: linear-gradient( 135deg,rgb(255 255 255/30%)0%,#0000 100%,#0000 25% );
-    /* box-shadow: 0 0 6px #00000090; */
 }
 
 #audio_menu::-webkit-scrollbar {
@@ -30,6 +29,10 @@ body {
     pointer-events: all !important;
 }
 
+.actived-audio {
+    box-shadow: 0 0 5px #00000090;
+}
+
 #menu_toggle_btn {
     opacity: 0;
     pointer-events: none;
@@ -37,8 +40,10 @@ body {
 }
 
 .card {
-    min-width: 600px;
-    min-height: 600px;
+    min-width: 700px;
+    min-height: 700px;
+    max-width: 700px;
+    max-height: 700px;
     background-repeat: no-repeat !important;
     background-size: cover !important;
 }
@@ -48,7 +53,7 @@ body {
     pointer-events: all;
 }
 
-.card::before {
+.card._modal::before {
     content: '';
     width: 100%;
     height: 100%;
@@ -166,3 +171,22 @@ body {
 	}
 }
 
+.album-options-box {
+    opacity: 0;
+    pointer-events: none;
+    transition: all .2s;
+}
+
+.album-box .album-options-box {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.album-box:hover .album-options-box {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.active-album-name-inp {
+    display: block;
+}
