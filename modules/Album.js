@@ -1,4 +1,4 @@
-const {ipcMain} = require('electron')
+const {ipcMain, ipcRenderer} = require('electron')
 const {AlbumComponents} = require('./components/AlbumComponents')
 const {JsonEditor} = require('./global/JsonEditor')
 const {App} = require('./global/App')
@@ -75,14 +75,12 @@ class Album extends AlbumComponents {
         ipcMain.on('EDIT_ALBUM_AUDIOS', (e, id) => uploader(file_paths => this.editAlbumData(id, {paths: file_paths}), audios_options))
     }
     static selectAlbum () {
-        console.log('fghfh')
         // SELECT ALBUM
-        ipcMain.on('SELECT_ALBUM', (e, data) => {
-            JsonEditor.write(__ALBUM_DB_PATH, data, () => {
+        ipcMain.on('SELECT_ALBUM', (e, album_data) => {
+            JsonEditor.write(__ALBUM_DB_PATH, album_data, () => {
                 JsonEditor.get(__ALBUM_DB_PATH, data => {
                     __WIN.webContents.send('STEP', 3)
-                    getFileMetaData(data.paths, meta_data => __WIN.webContents.send('RENDER_MUSIC_PLAYER', meta_data))
-                })
+                    getFileMetaData(data.paths, meta_data => __WIN.webContents.send('RENDER_MUSIC_PLAYER', meta_data))                })
             })
         })
     }

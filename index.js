@@ -12,7 +12,7 @@ const {clearDatabase} = require('./modules/global/DataBase')
     // CLEAR_DATABASE
     ipcMain.on('CLEAR_DATABASE', (e, database_name) => clearDatabase(database_name))
     // CHANGE_STEP
-    ipcMain.on('CHANGE_STEP', (e, step) => e.sender.send('STEP', step))
+    ipcMain.on('CHANGE_STEP', (e, step) => __WIN.webContents.send('STEP', step))
 
 function createWindow (file_path) {
     __WIN = new BrowserWindow({
@@ -23,9 +23,10 @@ function createWindow (file_path) {
             preload: __dirname + '/src/scripts/preload.js'
         }
     })
-
+    
     __WIN.loadFile(file_path)
 }
+
 function main () {
     JsonEditor.get(__ALBUMS_DB_PATH, data => {
         __WIN.webContents.send('ALBUMS', data)
@@ -36,9 +37,11 @@ function main () {
     Album.editAlbum()
     Album.selectAlbum()
     Album.removeAlbum()
+
 }
 
 app.on('ready', async () => {
     await createWindow('./src/index.html')
-    __WIN.webContents.on('did-finish-load', () => main())
+    // __WIN.webContents.on('did-finish-load', () => main())
+    main()
 })

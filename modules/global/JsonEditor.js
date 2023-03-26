@@ -19,15 +19,11 @@ class JsonEditor {
     
             reading.on('data', json_data => {
                 json_data = JSON.parse(json_data.toString())
-                const props_keys = Object.keys(props)
-                const props_values = Object.values(props)
-            
-                for(let i = 0; i < props_keys.length; i++) {
-                    json_data[index][props_keys[i]] = props_values[i]
-                }
-    
+
+                const newData = { ...json_data, ...props }
+
                 reading.on('end', () => {
-                    fs.writeFile(path, JSON.stringify(json_data), err => resolve(json_data))
+                    fs.writeFile(path, JSON.stringify(newData), err => resolve(newData))
                 })
             })
         })
@@ -53,11 +49,11 @@ class JsonEditor {
         }
     }
     static get (path, callback) {
-        try {
-            fs.readFile(path, (err, json_data) => callback(JSON.parse(json_data.toString())))   
-        } catch (err) {
-            return err;
-        }
+        fs.readFile(path, (err, json_data) => {
+            console.log(err)
+            if (!err) callback(JSON.parse(json_data.toString()))
+            else callback(err)
+        })
     }
 }
 
