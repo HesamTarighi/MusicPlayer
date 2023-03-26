@@ -1,5 +1,6 @@
-const {JsonEditor} = require('../global/JsonEditor')
-const {App} = require('../global/App')
+const { JsonEditor } = require('../global/JsonEditor')
+const { App } = require('../global/App')
+const Event = require('../global/Event')
 
 class AlbumComponents {
     static editAlbumData (id, props) {
@@ -8,12 +9,12 @@ class AlbumComponents {
             
             JsonEditor.edit(__ALBUMS_DB_PATH, index, props)
                 .then(data => {
-                    __WIN.webContents.send('ALBUMS', data)
+                    Event.sendEvent('ALBUMS', data)
                     App.restart()
                 })
         })
     }
-    static addAlbumData (name, picture, audios) {
+    static addNewAlbumData (name, picture, audios) {
         JsonEditor.get(__ALBUMS_DB_PATH, data => {
             JsonEditor.append(
                 __ALBUMS_DB_PATH,
@@ -27,4 +28,4 @@ class AlbumComponents {
     }
 }
 
-module.exports = {AlbumComponents}
+module.exports = { AlbumComponents }

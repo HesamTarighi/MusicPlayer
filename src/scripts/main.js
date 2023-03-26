@@ -67,13 +67,14 @@ ipcRenderer.on('STEP', (e, step) => {
             break;
     
         case 2:
+            console.log('2')
             ElementDisplay.show('albums_card')
             ElementDisplay.hide('upload_box')
             ElementDisplay.hide('music_player_card')
             break;
     
         case 3:
-            console.log('hjkg')
+            console.log('3')
             ElementDisplay.show('music_player_card')
             ElementDisplay.hide('upload_box')
             ElementDisplay.hide('albums_card')

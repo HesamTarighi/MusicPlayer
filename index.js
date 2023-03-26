@@ -33,7 +33,7 @@ function main () {
         __WIN.webContents.send('STEP', 2)
     })
     __WIN.webContents.send('UPLOAD')
-    Album.addAlbum()
+    Album.addNewAlbum()
     Album.editAlbum()
     Album.selectAlbum()
     Album.removeAlbum()
@@ -42,6 +42,5 @@ function main () {
 
 app.on('ready', async () => {
     await createWindow('./src/index.html')
-    // __WIN.webContents.on('did-finish-load', () => main())
     main()
 })

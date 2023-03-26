@@ -148,7 +148,6 @@ export default class extends Component {
         ipcRenderer.send('SELECT_ALBUM', data)
     }
     removeAlbum (id) {
-        console.log('aa');
         ipcRenderer.send('REMOVE_ALBUM', id)
     }
     editAlbumPicture (id) {
@@ -158,6 +157,6 @@ export default class extends Component {
         ipcRenderer.send('EDIT_ALBUM_AUDIOS', id)
     }
     editAlbumName (id, name) {
-        ipcRenderer.send('EDIT_ALBUM_NAME', {id, props: {name}})
+        ipcRenderer.send('EDIT_ALBUM_NAME', {id, props: { name }})
     }
 }
