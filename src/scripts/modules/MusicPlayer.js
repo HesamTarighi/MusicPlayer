@@ -1,14 +1,19 @@
 import Component from './Component.js'
 
 export default class extends Component {
-    constructor (data) {
+    constructor (data, config) {
         super()
 
-        this.data = data
-        this.current_audio = 1
-        this.audio = new Audio(this.data[this.current_audio -1].path)
+        this.data = data || {}
+        try {
+            this.current_audio = config.currentAudio
+            this.audio_mode = config.audioMode
+        } catch (e) {
+            this.current_audio = 1
+            this.audio_mode = 'repeat'
+        }
         this.audio_modes = ['repeat', 'next', 'random']
-        this.audio_mode = 'repeat'
+        this.audio = new Audio(this.data[this.current_audio -1].path)
         this.els = {
             card: document.getElementById('music_player_card'),
             wave: document.getElementById('wave'),
@@ -61,18 +66,20 @@ export default class extends Component {
         this.els.wave.classList.remove('wave-play')
     }
     next () {
-        this.els.titles.title_box.classList.add('music-changed')
-        setTimeout(() => {
-            this.els.titles.title_box.classList.remove('music-changed')
-
-            if (this.current_audio < this.data.length) this.current_audio++
-            else this.current_audio = 1
-            this.setAudioInfo()
-            this.pause()
-            this.audio = new Audio(this.data[this.current_audio -1].path)
-            this.activeList()
-            this.play()
-        }, 500)
+        return new Promise((resolve, reject) => {
+            this.els.titles.title_box.classList.add('music-changed')
+    
+            setTimeout(() => {
+                this.els.titles.title_box.classList.remove('music-changed')
+    
+                if (this.current_audio < this.data.length) this.current_audio++
+                else this.current_audio = 1
+                this.pause()
+                this.audio = new Audio(this.data[this.current_audio -1].path)
+                this.play()
+                resolve()
+            }, 500)
+        })
     }
     prev () {
         this.els.titles.title_box.classList.add('music-changed')
@@ -187,5 +194,16 @@ export default class extends Component {
     activeList () {
         this.els.audios_menu.lists.forEach(li => li.classList.remove('actived-audio'))
         this.els.audios_menu.lists[this.current_audio -1].classList.add('actived-audio')
+    }
+    timer (time) {
+        return new Promise ((resolve, reject) => {
+            let currentTime = 0
+
+            setInterval(() => {
+                currentTime += 1
+
+                if (currentTime == time * 60) this.next()
+            }, 1000)
+        })
     }
 }

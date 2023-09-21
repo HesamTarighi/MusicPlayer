@@ -2,16 +2,17 @@ const fs = require('fs')
 
 class JsonEditor {
     static append (path, data, index) {
-        const reading = fs.createReadStream(path)
-    
-        reading.on('data', json_data => {
-            json_data = JSON.parse(json_data.toString())
-    
-            json_data.length > 0 && index ? json_data[index].push(data) : json_data.push(data)
-    
-            fs.writeFile(path, JSON.stringify(json_data), err => console.log(err))
+        return new Promise((resolve, reject) => {
+            const reading = fs.createReadStream(path)
+
+            reading.on('data', json_data => {
+                json_data = JSON.parse(json_data.toString())
+
+                json_data.length > 0 && index ? json_data[index].push(data) : json_data.push(data)
+
+                reading.on('end', () => this.write(path, json_data))
+            })
         })
-        return Promise.resolve('')
     }
     static edit (path, index, props) {
         return new Promise((resolve, reject) => {
@@ -20,13 +21,9 @@ class JsonEditor {
             reading.on('data', json_data => {
                 json_data = JSON.parse(json_data.toString())
 
-                const newData = { ...json_data[index], ...props }
+                json_data[index] = { ...json_data[index], ...props }
 
-                console.log(newData)
-
-                reading.on('end', () => {
-                    fs.writeFile(path, JSON.stringify(newData), err => resolve(newData))
-                })
+                reading.on('end', () => fs.writeFile(path, JSON.stringify(json_data), err => resolve(json_data)))
             })
         })
     }

@@ -3,6 +3,7 @@ import Album from './modules/Album.js'
 import ElementDisplay from './modules/GlobalModules.js'
 
 ipcRenderer.on('RENDER_MUSIC_PLAYER', (e, data) => {
+    console.log('ss')
     const music_player = new MusicPlayer(data)
     
     const toggle_play_btn = document.getElementById('toggle_btn')
@@ -15,7 +16,12 @@ ipcRenderer.on('RENDER_MUSIC_PLAYER', (e, data) => {
 
     for (let i = 0; i < modes.length; i++) modes[i].addEventListener('click', e => changeMode(e))
     
-    next_btn.addEventListener('click', () => music_player.next())
+    next_btn.addEventListener('click', () => {
+        music_player.next().then(() => {
+            music_player.setAudioInfo()
+            music_player.activeList()
+        })
+    })
     prev_btn.addEventListener('click', () => music_player.prev())
     menu_toggle_btn.addEventListener('click', () => audios_box_menu.classList.toggle('actived'))
     toggle_play_btn.addEventListener('click', () => {
@@ -57,6 +63,25 @@ ipcRenderer.on('ALBUMS', (e, data) => {
     add_new_album_btn.addEventListener('click', () => ipcRenderer.send('CHANGE_STEP', 1))
 
     for (let i = 0; i < data.length; i++) new Album(data[i])
+
+    function autoPlayRandomMusic () {
+        const newData = []
+
+        for (let i = 0; i < data.length; i++) {
+            for (let j = 0; j < data[i].paths.length; j++) newData.push({ path: data[i].paths[j] })
+        }
+
+        const musicPlayer = new MusicPlayer(newData, {
+            audioMode: 'next',
+            currentAudio: Math.floor(1 + Math.random() * newData.length)
+        })
+
+        musicPlayer.play()
+        musicPlayer.timer(0.5).then(() => musicPlayer.next())
+    }
+
+
+    autoPlayRandomMusic()
 })
 ipcRenderer.on('STEP', (e, step) => {
     switch (step) {
@@ -67,21 +92,18 @@ ipcRenderer.on('STEP', (e, step) => {
             break;
     
         case 2:
-            console.log('2')
             ElementDisplay.show('albums_card')
             ElementDisplay.hide('upload_box')
             ElementDisplay.hide('music_player_card')
             break;
     
         case 3:
-            console.log('3')
             ElementDisplay.show('music_player_card')
             ElementDisplay.hide('upload_box')
             ElementDisplay.hide('albums_card')
             break;
     
         default:
-            alert(0)
             break;
     }
 })
